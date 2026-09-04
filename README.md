@@ -97,3 +97,8 @@ Do not put the token in the service file or in shell history. Keep `.env` owned 
 On startup with `DISCORD_GUILD_ID`, Craftacus registers guild commands and checks the Craftein layout. `/setup` is also available to staff. Setup creates only missing categories, channels, roles, permission overwrites, and canonical panel messages. It does not delete existing channels, delete user messages, or blindly recreate duplicate panels. Existing default Discord channels are left alone.
 
 The main onboarding path is: read the rules, accept them, receive Verified Explorer, then optionally choose interest roles and complete `/verify`. A profile is a voluntary self-report and is not proof of Microsoft or Xbox ownership. Text chat remains valid and voice is optional.
+
+
+## Beginner deployment walkthrough
+
+For a fully guided Windows PowerShell-to-SSH process, including what to type on each computer, how to create `.env`, how to use `nano`, how to install systemd, how to view logs, and how to update or troubleshoot the bot, read [`DEPLOYMENT_TUTORIAL.md`](./DEPLOYMENT_TUTORIAL.md).
