@@ -10,6 +10,8 @@ export function loadConfig(env = process.env) {
   if (token.includes('replace-with') || token.length < 40) throw new Error('DISCORD_TOKEN does not look like a real replacement token. Rotate exposed tokens before starting.');
   if (!clientId) throw new Error('DISCORD_CLIENT_ID is required.');
   const dataDir = path.resolve(env.CRAFTACUS_DATA_DIR || './data');
+  const databaseUrl = (env.DATABASE_URL ?? '').trim() || null;
+  const requireDatabase = truthy.has(String(env.REQUIRE_DATABASE ?? '').toLowerCase());
   const bedrockPort = Number(env.BEDROCK_PORT || 19132);
   if (!Number.isInteger(bedrockPort) || bedrockPort < 1 || bedrockPort > 65535) throw new Error('BEDROCK_PORT must be a valid TCP/UDP port.');
   return {
@@ -20,6 +22,9 @@ export function loadConfig(env = process.env) {
     bedrockHost: (env.BEDROCK_HOST ?? '').trim() || null,
     bedrockPort,
     enableMemberEvents: truthy.has(String(env.ENABLE_MEMBER_EVENTS ?? '').toLowerCase()),
-    modLogChannelId: (env.MOD_LOG_CHANNEL_ID ?? '').trim() || null
+    modLogChannelId: (env.MOD_LOG_CHANNEL_ID ?? '').trim() || null,
+    applicationReviewChannelId: (env.APPLICATION_REVIEW_CHANNEL_ID ?? '').trim() || null,
+    databaseUrl,
+    requireDatabase
   };
 }

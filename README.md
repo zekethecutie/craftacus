@@ -21,6 +21,35 @@ npm start
 
 `DISCORD_GUILD_ID` is recommended during development because commands register immediately to one guild. Omit it only when intentionally registering global commands, which can take time to propagate. Set `ENABLE_MEMBER_EVENTS=true` only after enabling **Server Members Intent** in the Discord Developer Portal.
 
+## Neon persistence
+
+Craftacus can use Neon Postgres for minimal per-guild profiles and whitelist application records. On startup it creates `craftein_profiles` and `craftein_whitelist_applications` if they do not exist, using parameterized queries and no raw SQL built from member input. Profiles store only Discord user ID, guild ID, optional gamertag, region, voice preference, and timestamps. Applications store the self-reported gamertag, region, 16+ confirmation, Bedrock confirmation, reason, status, reviewer ID, review note, and timestamps. Exact age, Microsoft credentials, passwords, and unnecessary personal data are not collected.
+
+Set `DATABASE_URL` to the replacement Neon connection string and keep `REQUIRE_DATABASE=true` in production. With the database enabled, members can use `/whitelist-apply`; staff can use `/applications` and `/application-review`. Approval is a staff decision record and does not bypass the Discord rules gate. The existing Google Form remains available as the public application path; this command is the Discord-native review path.
+
+## Exact SSH deployment
+
+From your own computer, replace `FRIEND_HOST`, `FRIEND_USER`, and the local path to your new environment file:
+
+```bash
+ssh FRIEND_USER@FRIEND_HOST 'mkdir -p ~/services && if [ -d ~/services/craftacus/.git ]; then cd ~/services/craftacus && git pull --ff-only; else git clone https://github.com/zekethecutie/craftacus.git ~/services/craftacus; fi && cd ~/services/craftacus && npm ci --omit=dev'
+scp ./production.env FRIEND_USER@FRIEND_HOST:/tmp/craftacus.env
+ssh FRIEND_USER@FRIEND_HOST 'install -m 600 /tmp/craftacus.env ~/services/craftacus/.env && rm -f /tmp/craftacus.env && sed -n "s/=.*//p" ~/services/craftacus/.env | sort'
+ssh FRIEND_USER@FRIEND_HOST 'cd ~/services/craftacus && npm start'
+```
+
+The `production.env` file must be created locally and must never be committed. It should contain the replacement Discord token, application client ID, Craftein guild ID, the replacement Neon `DATABASE_URL`, `REQUIRE_DATABASE=true`, and any optional Bedrock settings. The final SSH command is a foreground smoke test; stop it with `Ctrl+C` after the login and database initialization succeed.
+
+For systemd, edit the service template’s two `REPLACE_WITH...` values, then run:
+
+```bash
+scp deploy/craftacus.service.example FRIEND_USER@FRIEND_HOST:/tmp/craftacus.service
+ssh FRIEND_USER@FRIEND_HOST 'sudo install -o root -g root -m 644 /tmp/craftacus.service /etc/systemd/system/craftacus.service && rm -f /tmp/craftacus.service && sudo systemctl daemon-reload && sudo systemctl enable --now craftacus && sudo systemctl status --no-pager craftacus'
+ssh FRIEND_USER@FRIEND_HOST 'journalctl -u craftacus -n 100 --no-pager'
+```
+
+If Node.js is installed through a version manager rather than `/usr/bin/node`, replace `ExecStart` with the absolute path returned by `command -v node` on the friend’s computer. The service account must own the checkout and `.env`; keep `.env` at mode `600`.
+
 ## Least-privilege Discord permissions
 
 Craftacus needs View Channels, Send Messages, Embed Links, Read Message History, Use Application Commands, Manage Roles for the Verified Explorer and optional interest roles, Manage Messages only for `/purge`, Moderate Members only for `/timeout`, and Manage Guild only for `/setup` and `/announce`. The bot does not need Administrator. Its managed role must be placed above every role it assigns, while remaining below the human staff roles.
