@@ -1,0 +1,16 @@
+[Unit]
+Description=Craftacus Discord bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=REPLACE_WITH_LINUX_USER
+WorkingDirectory=/home/REPLACE_WITH_LINUX_USER/services/craftacus
+ExecStart=/usr/bin/node /home/REPLACE_WITH_LINUX_USER/services/craftacus/src/index.js
+Restart=on-failure
+RestartSec=5
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target
