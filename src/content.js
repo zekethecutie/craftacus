@@ -22,3 +22,11 @@ export const CHANNELS = {
   voice: ['Community Voice', 'Craftein Voice 1', 'Craftein Voice 2'],
   staff: ['staff-room', 'mod-log', 'applications-review', 'staff-guidelines']
 };
+
+export const LORE_DOCS = {
+  overview: { label: 'Lore overview', description: 'The optional framework behind Craftein', body: `${LORE}\n\nOfficial lore is a framework, not a script. It offers mysteries, places, catalysts, and consequences; player civilizations create most of the living history.` },
+  first_binding: { label: 'The First Binding', description: 'An ancient event with uncertain meaning', body: 'The First Binding is remembered as an ancient event, but no surviving record explains it completely. Different fragments point toward a shared promise, a boundary, or a pact whose original purpose has been lost. Treat interpretations as theories, not mandatory canon.' },
+  quieting: { label: 'The Quieting', description: 'When distant peoples stopped communicating', body: 'The Quieting was a later period when communication and shared institutions between distant peoples failed. Roads remained, records disagreed, and once-connected communities became harder to reach. Its causes are unresolved.' },
+  founding_season: { label: 'The Founding Season', description: 'The present era of new settlements', body: FOUNDING_SEASON },
+  lore_guidelines: { label: 'Lore participation guide', description: 'How to add stories without overriding players', body: 'Lore is optional. Ordinary players are never background characters. Keep additions collaborative, leave room for different interpretations, and do not use lore to force unwilling players into conflict, roleplay, voice, or personal disclosure.' }
+};

@@ -19,7 +19,7 @@ export function loadConfig(env = process.env) {
     clientId,
     guildId: (env.DISCORD_GUILD_ID ?? '').trim() || null,
     dataDir,
-    bedrockHost: (env.BEDROCK_HOST ?? '').trim() || null,
+    bedrockHost: (env.BEDROCK_HOST ?? '').trim() || 'craftein.atbp.fun',
     bedrockPort,
     enableMemberEvents: truthy.has(String(env.ENABLE_MEMBER_EVENTS ?? '').toLowerCase()),
     modLogChannelId: (env.MOD_LOG_CHANNEL_ID ?? '').trim() || null,

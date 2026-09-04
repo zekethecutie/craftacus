@@ -27,6 +27,14 @@ Craftacus can use Neon Postgres for minimal per-guild profiles and whitelist app
 
 Set `DATABASE_URL` to the replacement Neon connection string and keep `REQUIRE_DATABASE=true` in production. With the database enabled, members can use `/whitelist-apply`; staff can use `/applications` and `/application-review`. Approval is a staff decision record and does not bypass the Discord rules gate. The existing Google Form remains available as the public application path; this command is the Discord-native review path.
 
+## Roles, lore, and status UX
+
+After accepting the rules, members receive **Verified Explorer** access and can use `/roles` to open a private optional picker for Creator, Builder, Lorekeeper, Eventmaker, Developer, Asia-Pacific coordination, Voice Optional, and Event Ping. These roles can be changed without removing staff, recognition, or access roles. No extra public role channel is required.
+
+`#lore-and-discoveries` receives one canonical Craftein lore archive panel. Its menu opens entries such as the lore overview, The First Binding, The Quieting, the Founding Season, and the lore participation guide as ephemeral responses visible only to the member who selected them. Lore remains optional and does not override player freedom.
+
+Status checks default to `craftein.atbp.fun` on Bedrock port `19132`, or use `BEDROCK_HOST` and `BEDROCK_PORT` when explicitly configured. Public replies expose only Online, Offline/not reachable, player count, version, and observed uptime. They never expose the hostname, port, connection string, or other server address details. Uptime means time observed continuously online by Craftacus since the last offline result or process reset; it is not a claim about historical host uptime.
+
 ## Exact SSH deployment
 
 From your own computer, replace `FRIEND_HOST`, `FRIEND_USER`, and the local path to your new environment file:
