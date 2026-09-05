@@ -102,3 +102,8 @@ The main onboarding path is: read the rules, accept them, receive Verified Explo
 ## Beginner deployment walkthrough
 
 For a fully guided Windows PowerShell-to-SSH process, including what to type on each computer, how to create `.env`, how to use `nano`, how to install systemd, how to view logs, and how to update or troubleshoot the bot, read [`DEPLOYMENT_TUTORIAL.md`](./DEPLOYMENT_TUTORIAL.md).
+
+
+## Server blueprint and visual assets
+
+The practical Discord layout, role hierarchy, permission matrix, onboarding questions, panel captions, and banner plan are documented in [`docs/craftein-server-blueprint.md`](./docs/craftein-server-blueprint.md). Reference-matched wide banner assets are stored under `assets/` for the welcome, rules, roles, lore, apply, and status panels.
