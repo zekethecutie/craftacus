@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-const emptyGuild = () => ({ channels: {}, categories: {}, roles: {}, messages: {}, config: {}, members: {}, changelog: [], welcome: { lastAt: 0, recentMemberIds: [] } });
+const emptyGuild = () => ({ channels: {}, categories: {}, roles: {}, messages: {}, config: {}, members: {}, changelog: [], welcome: { joinLastAt: 0, joinRecentMemberIds: [], verifiedLastAt: 0, verifiedMemberIds: [] } });
 
 export async function openState(dataDir) {
   await fs.mkdir(dataDir, { recursive: true });
