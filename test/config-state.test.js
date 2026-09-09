@@ -30,3 +30,16 @@ test('state is isolated by guild and writes atomically', async () => {
   assert.equal(raw.guilds.two.members.alice.acceptedAt, 'later');
   assert.equal(raw.guilds.one.members.alice.acceptedAt === raw.guilds.two.members.alice.acceptedAt, false);
 });
+
+import { createWelcomeState, shouldSendVerifiedWelcome } from '../src/welcome.js';
+
+test('verified welcome is first-transition only and independent from raw join state', () => {
+  const state = { ...createWelcomeState(), joinLastAt: 1_000_000, joinRecentMemberIds: ['member-a'] };
+  const first = shouldSendVerifiedWelcome(state, 'member-b', 2_000_000);
+  assert.equal(first.send, true);
+  const duplicate = shouldSendVerifiedWelcome(first.state, 'member-b', 2_000_001);
+  assert.equal(duplicate.send, false);
+  const cooldown = shouldSendVerifiedWelcome(first.state, 'member-c', 2_000_002);
+  assert.equal(cooldown.send, false);
+  assert.deepEqual(cooldown.state.joinRecentMemberIds, ['member-a']);
+});
