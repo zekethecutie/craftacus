@@ -104,6 +104,6 @@ The main onboarding path is: read the rules, accept them, receive Verified Explo
 For a fully guided Windows PowerShell-to-SSH process, including what to type on each computer, how to create `.env`, how to use `nano`, how to install systemd, how to view logs, and how to update or troubleshoot the bot, read [`DEPLOYMENT_TUTORIAL.md`](./DEPLOYMENT_TUTORIAL.md).
 
 
-## Server blueprint and visual assets
+## Server blueprint and shared planning
 
-The practical Discord layout, role hierarchy, permission matrix, onboarding questions, panel captions, and banner plan are documented in [`docs/craftein-server-blueprint.md`](./docs/craftein-server-blueprint.md). Reference-matched wide banner assets are stored under `assets/` for the welcome, rules, roles, lore, apply, and status panels.
+The practical Discord layout, role hierarchy, permission matrix, onboarding questions, panel captions, and banner plan are documented in [`docs/craftein-server-blueprint.md`](./docs/craftein-server-blueprint.md). The Bedrock add-on coordination baseline—including existing-pack integration, player-only Phase 1 scope, future boss damage attribution, relic ownership, structures, dimensions, VFX, and unresolved owner decisions—is documented in [`docs/craftein-bedrock-planning-amendment.md`](./docs/craftein-bedrock-planning-amendment.md). Reference-matched wide banner assets are stored under `assets/` for the welcome, rules, roles, lore, apply, and status panels.
