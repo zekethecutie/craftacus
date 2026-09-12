@@ -203,3 +203,133 @@ Before locking life mechanics, deep canon, or compatibility targets, the owner m
 20. Can a relic owner lose, transfer, or permanently bind a weapon?
 
 Until these decisions are answered, mechanics and canon should remain clearly marked as provisional and configurable rather than silently fixed in code.
+
+## 13. New proposed life mechanics: HUD, Plunder, and resurrection paths
+
+The owner has proposed a three-life presentation and recovery system. These mechanics are design proposals and are not final canon until tested and approved.
+
+### 13.1 Three-life HUD
+
+The player should see a small, persistent reminder of remaining lives. The visual language should resemble the **hardcore heart presentation**, even though the server is not technically vanilla Hardcore mode. The purpose is clarity and atmosphere: three life icons communicate that the player has a limited number of returns.
+
+The HUD should:
+
+- Show the current life count from server-authoritative state.
+- Use a custom heart texture or heart-like life icon in the resource pack.
+- Be visually distinct from the ordinary health bar so players do not confuse health with lives.
+- Occupy a restrained area of the HUD and avoid covering crosshairs, hotbars, inventories, boss bars, or other add-on UI.
+- Update only when the life state changes or at a low frequency, not every tick unless the target Bedrock UI requires it.
+- Remain readable on mixed screen sizes and platforms.
+- Support full, empty, lost, pending-resurrection, and corrupted/blocked states if those are later approved.
+
+The implementation should prefer an additive custom HUD element in the resource pack's HUD layer. Bedrock `hud_screen` modifications are version-sensitive and may conflict with resource packs such as Night Vision, Torches Reimagined, THE BLOOP RP, or other packs that alter UI. Therefore the HUD needs a compatibility test and a fallback mode, such as an action-bar reminder or a small vanilla-compatible status message. It must not replace the gameplay HUD or depend on a large menu.
+
+### 13.2 Plunder life transfer
+
+The owner has proposed a custom **Plunder potion**. When a player has the Plunder effect and validly kills another player, one life is transferred from the victim to the killer. The intended potion visual is a dark-crimson-to-bright-red gradient. The potion, effect, and transfer are separate from ordinary health regeneration or combat damage.
+
+The safe proposed transaction is:
+
+```text
+Player drinks or receives Plunder effect
+  -> server records a time-limited Plunder charge
+  -> player validly kills another player
+  -> server verifies the killer, victim, cause, encounter, and cooldown
+  -> exactly one life is removed from the victim
+  -> exactly one life is granted to the killer
+  -> charge is consumed
+  -> both player records and the audit event are persisted
+  -> HUDs and messages update
+```
+
+Required safeguards:
+
+- The transfer must be server-authoritative and UUID-based.
+- A kill must be attributed to the killer through a valid player-caused damage path; fall, lava, void, command, environmental, and ambiguous deaths must not automatically qualify.
+- The transfer must be idempotent so one death cannot trigger twice.
+- The killer must be below the configured maximum life capacity; a full player should not be able to farm a victim for no meaningful cost.
+- The victim must have a transferable life under the final rules. The owner must decide whether the final remaining life is protected or whether Plunder may reduce a player to zero and trigger soul loss.
+- The effect should normally be consumed on a successful transfer, not remain indefinitely active.
+- There should be a duration, one-kill charge, and post-transfer cooldown.
+- Repeated kills of the same victim should be rate-limited or blocked for a configurable period.
+- Alternate accounts, arranged kills, spawn killing, and rapid victim rotation should be detectable through audit logs and optional protection rules.
+- A player should not gain more than the configured maximum lives.
+- If the victim's life cannot be removed and the killer's life cannot be granted atomically, the transaction should fail closed and preserve the prior state.
+- The system must define whether Plunder is allowed during protected events, boss encounters, safe zones, rituals, or server-start grace periods.
+
+The design should distinguish **life theft** from ordinary PvP. A player can still kill another player normally without transferring a life unless the Plunder condition is valid. The future potion recipe must be difficult enough that life transfer is a major political and strategic act rather than a routine combat consumable.
+
+### 13.3 Two resurrection paths
+
+The owner has proposed two separate systems:
+
+#### A. Resurrection Totem / prepared anchor
+
+This is an item or artifact that a living player obtains and sets before death. It may bind to a location, player, or ritual state. If the player later exhausts their lives, the prepared anchor can make them eligible for a defined resurrection path without requiring them to interact while dead or spectating.
+
+This distinction matters because an exhausted player may be unable to interact normally in spectator mode. The server should not depend on a dead player clicking a block. A prepared totem should instead register its state before death and trigger a pending-resurrection record when the player reaches zero lives.
+
+The owner must decide whether a prepared totem:
+
+- Prevents the player from entering the full soul-loss state.
+- Places the player in a pending state until a ritual is completed.
+- Automatically returns the player after a delay.
+- Requires another player to activate it.
+- Is consumed on use.
+- Returns one life or a weakened resurrection state.
+
+#### B. Resurrection Altar with GUI
+
+The altar is a fixed world object or structure used by living players to resurrect an exhausted player who is offline, soul-lost, banned by the add-on, or in a spectator/restricted state. The altar GUI is appropriate for selecting a target and confirming the required exchange, but the GUI is only the interaction layer; the server validates and commits the ritual.
+
+The altar should support:
+
+- A list or search of eligible player targets without exposing unnecessary private information.
+- Clear display of the cost, target state, ritual duration, and irreversible consequences.
+- Confirmation before consuming rare materials or a donor life.
+- Offline targets identified by stable UUID and safe display name.
+- A staged ritual that can be interrupted and recovered.
+- Permission checks for who may use the altar.
+- A server-side transaction record and audit log.
+
+### 13.4 Equivalent exchange and balance direction
+
+The owner wants resurrection to follow an equivalent-exchange principle: a life or resurrection cannot be created casually from nothing. This is a strong balance direction. The preferred design should combine a **rare world-discovered catalyst** with a meaningful sacrifice rather than relying only on a cheap recipe.
+
+The strongest provisional model is:
+
+```text
+Resurrection Altar
+  + rare discovered catalyst or relic fragment
+  + ritual location and time
+  + donor sacrifices one of their own lives
+  -> target returns with one life or a defined weakened state
+```
+
+This makes resurrection possible but expensive, political, and memorable. A purely craftable altar risks turning resurrection into an industrial resource loop. A completely unobtainable altar risks making the life system feel arbitrary. A hybrid model is more controllable:
+
+- The altar itself may be found in a structure, repaired, or crafted only from extremely rare world-bound components.
+- The catalyst should be limited by exploration, structure loot, or a controlled event rather than infinite ordinary crafting.
+- The donor sacrifice must be recorded and committed exactly once.
+- The donor should not be able to sacrifice below a protected minimum unless that extreme rule is explicitly approved.
+- The target should generally return with one life, not automatically regain all three.
+- Resurrection may carry a debt, mark, cooldown, temporary weakness, or lore consequence; these are provisional options.
+
+The alternative model—crafting the altar from difficult resources without a donor sacrifice—should remain available as a later balance test, but it should not be selected silently. The owner should decide whether the dramatic cost is personal life, rare catalyst, permanent debuff, territorial risk, or a combination.
+
+### 13.5 Spectator and zero-life behavior
+
+The owner has suggested that players who exhaust their lives may become spectators instead of receiving a conventional permanent ban. This is technically and socially more flexible, but the exact state must be defined. A provisional model is:
+
+```text
+Lives reach zero
+  -> player is moved to a restricted/spectator state
+  -> soul-loss record stores the expiry time and reason
+  -> player cannot bypass the state through ordinary interaction
+  -> prepared totem or altar ritual can restore eligibility
+  -> return transition is validated and audited
+```
+
+Whether the player can chat, observe active players, travel, access containers, use commands, or participate in lore while spectating requires explicit rules. Spectator mode must not become a way to scout hidden structures, reveal locations, assist combat, or bypass protections unless the owner intentionally permits it.
+
+These rules must be implemented as a controlled server state rather than assuming vanilla spectator behavior alone is sufficient.
