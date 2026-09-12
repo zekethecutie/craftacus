@@ -80,3 +80,12 @@ Craftacus now publishes the supplied wide Craftein banner assets on the welcome,
 The normal `/setup` command is idempotent and non-destructive: it repairs missing resources, reuses exact-name/type channels, edits the bot-owned panel messages, and does not delete existing channels, roles, or messages. `/setup-audit` reports exact duplicate Craftein channels and roles without changing anything. `/setup-clean confirm:true` is the only cleanup path, and it removes only exact duplicate resources after staff explicitly confirms the command.
 
 Civilizations are proposed with `/clan-apply`, reviewed by staff with `/clan-requests` and `/clan-review`, and represented by an optional Discord role after approval. Approved owners and officers can invite verified members, change member/officer rank, and remove members with `/clan-invite`, `/clan-member`, and `/clan-remove`. Clan participation is voluntary; no civilization may require voice, lore, personal disclosure, or unpaid contribution. Neon stores applications, approved civilizations, and membership ranks.
+
+
+## Permission and message-format alignment
+
+The live setup now keeps the onboarding channels visible to everyone while making them read-only, so new members can read the welcome, rules, role, application, and announcement panels without posting into them. Verified Explorers can see and participate in the regular community, world, creative, partnership, and voice areas. The `Active Player` role is created for approved whitelist applicants and is the access boundary for Bedrock LFG and civilization-law discussion. Staff roles and the guild owner can access the staff category, while the bot receives the minimum channel permissions needed to maintain panels and moderation logs.
+
+The setup pass remains non-destructive. It reuses exact-name/type resources, aligns permission overwrites on those canonical channels, and reports exact duplicates without deleting them. A separate confirmed cleanup command remains the only deletion path.
+
+Craftacus-owned embed descriptions are normalized to real newline characters before publication. A one-time live repair was applied to the existing rules, how-it-works, application, creator, and partnership panels; banners, buttons, selectors, and message IDs were preserved.

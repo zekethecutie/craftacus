@@ -3,7 +3,8 @@ import { BRAND } from './content.js';
 
 export const STAFF = new PermissionsBitField([PermissionsBitField.Flags.ManageGuild, PermissionsBitField.Flags.ManageMessages, PermissionsBitField.Flags.ModerateMembers]);
 export const modOnly = (interaction) => interaction.memberPermissions?.has(PermissionsBitField.Flags.ManageGuild) || false;
-export const embed = (title, description, color = BRAND.color) => new EmbedBuilder().setTitle(title).setDescription(description).setColor(color).setTimestamp();
+export function normalizeDiscordText(value) { return String(value ?? '').replaceAll('\\n', '\n'); }
+export const embed = (title, description, color = BRAND.color) => new EmbedBuilder().setTitle(title).setDescription(normalizeDiscordText(description)).setColor(color).setTimestamp();
 export function channelByIdOrName(guild, ids = {}, key, name) {
   const byId = ids[key] && guild.channels.cache.get(ids[key]);
   return byId || guild.channels.cache.find(c => c.name === name);
