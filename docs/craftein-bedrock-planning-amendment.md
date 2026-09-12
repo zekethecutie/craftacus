@@ -135,7 +135,49 @@ The website is the public editorial and community hub, while Craftacus is the Di
 
 The Bedrock add-on should not directly depend on either database during Phase 1. If a future synchronization bridge is desired, it must be deliberately designed with authentication, privacy, failure handling, and a documented source of truth.
 
-## 11. Owner decisions still required
+## 11. Weapon, skill, particle, and animation references
+
+The owner has identified the following as visual and mechanical references rather than content to copy blindly:
+
+- [RPG Elemental Weapon](https://mcpedl.com/rpg-elemental-weapon/)
+- Shounen de Fantasy-style Bedrock add-ons
+- Heroic Productions add-ons
+- Marketplace custom weapons with skills
+- Brutal Legends-style presentation
+- Java RPG mods and class/skill systems as mechanical references
+
+The cited RPG Elemental Weapon page demonstrates the target category: custom fantasy weapons with special effects and a large Bedrock distribution, while also showing why compatibility and performance must be tested when multiple add-ons are installed. The user’s target is not a generic RPG conversion; CRAFTEIN should retain vanilla survival, exploration, civilization, mystery, and earned-power identity.
+
+The planned implementation is layered:
+
+| Layer | Responsibility |
+|---|---|
+| Bedrock behavior pack | Stable item/entity identifiers, damage rules, tags, recipes where approved, and gameplay events. |
+| Resource pack | Textures, attachables, geometry, render controllers, animation files, sounds, UI assets, and particles. |
+| Script API | Server-authoritative cooldowns, skill validation, targeting, damage, costs, progression, life/ritual state, and anti-abuse checks. |
+| Animation controllers | State-based weapon/entity presentation such as idle, charging, activation, recovery, and phase states. |
+| Particle systems | Controlled VFX using custom textures, emitters, Molang variables, and bounded lifetimes/counts. |
+| Optional native-style GUI | Skill selection, loadouts, ritual confirmation, and administrative tools; never the primary world experience. |
+
+Future RPG-like skill selection should use a server-owned loadout record rather than trusting visible item names or client UI. A skill activation should validate ownership, selected loadout, cooldown, resource cost, location, target, phase restrictions, and rate limits before it emits effects or applies damage. Visual effects must never be the authority for gameplay damage.
+
+The future custom-weapon pipeline is:
+
+```text
+Stable craftein weapon ID
+  -> behavior item and gameplay rules
+  -> attachable / geometry / texture mapping
+  -> animation controller state
+  -> Script API ability validation
+  -> bounded particle and sound sequence
+  -> server-authoritative damage/effects
+```
+
+The weapon resource pack supplied by the owner must be inspected for Bedrock compatibility and authorization before it is ported or redistributed. Java-only model conventions cannot be assumed to work on Bedrock. Third-party references may guide implementation quality and design language, but their files, names, textures, models, animations, particles, and code must not be copied without permission.
+
+Phase 1 should build and test world mechanics first: Danan blessing state, player lives, death processing, soul-loss state, Resurrection Totem/ritual, persistence, and configurable effects. Weapon skills, RPG classes, advanced combat, and high-cost VFX remain later layers that consume stable core APIs.
+
+## 12. Owner decisions still required
 
 Before locking life mechanics, deep canon, or compatibility targets, the owner must decide:
 
