@@ -71,3 +71,12 @@ Use these as the concise message captions below any matching image banner:
 ## Banner asset plan
 
 Use the supplied Craftein header as the reference for the visual language: Minecraft-like blocky 3D world, warm meadow light, deep purple foliage, pink-magenta title treatment, and calm discovery mood. Produce one standalone banner per panel with the exact short title `WELCOME`, `RULES`, `ROLES`, `LORE`, `APPLY`, or `STATUS`. Keep each title large and centered, preserve the reference palette and voxel-like atmosphere, and avoid adding URLs, small text, or fake server information.
+
+
+## Integrated Craftacus feature pass
+
+Craftacus now publishes the supplied wide Craftein banner assets on the welcome, rules, roles, lore, apply, and private status panels. The dedicated `#roles` channel is created by the normal setup pass and contains the optional-interest selector. Interest roles are voluntary, can be changed later, and never gate access, recognition, moderation, or belonging.
+
+The normal `/setup` command is idempotent and non-destructive: it repairs missing resources, reuses exact-name/type channels, edits the bot-owned panel messages, and does not delete existing channels, roles, or messages. `/setup-audit` reports exact duplicate Craftein channels and roles without changing anything. `/setup-clean confirm:true` is the only cleanup path, and it removes only exact duplicate resources after staff explicitly confirms the command.
+
+Civilizations are proposed with `/clan-apply`, reviewed by staff with `/clan-requests` and `/clan-review`, and represented by an optional Discord role after approval. Approved owners and officers can invite verified members, change member/officer rank, and remove members with `/clan-invite`, `/clan-member`, and `/clan-remove`. Clan participation is voluntary; no civilization may require voice, lore, personal disclosure, or unpaid contribution. Neon stores applications, approved civilizations, and membership ranks.
