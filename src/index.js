@@ -6,6 +6,7 @@ import { BRAND, CHANNELS, DESCRIPTION, FOUNDING_SEASON, INTERESTS, LINKS, LORE, 
 import { getBedrockStatus, humanDuration } from './bedrock.js';
 import { shouldSendVerifiedWelcome } from './welcome.js';
 import { cleanText, embed, logAction, modOnly } from './discord.js';
+import { respond } from './interaction.js';
 
 const config = loadConfig();
 const store = await openState(config.dataDir);
@@ -89,7 +90,6 @@ async function setupGuild(guild) {
 
 async function register() { const rest = new REST({ version: '10' }).setToken(config.token); const route = config.guildId ? Routes.applicationGuildCommands(config.clientId, config.guildId) : Routes.applicationCommands(config.clientId); await rest.put(route, { body: commands }); }
 function requireVerified(interaction) { return Boolean(interaction.member?.roles?.cache?.some(r => r.name === 'Verified Explorer')); }
-async function respond(interaction, payload) { if (interaction.deferred) return interaction.editReply(payload); if (interaction.replied) return interaction.followUp(payload); return interaction.reply(payload); }
 async function greetVerifiedMember(member) { const s = store.guild(member.guild.id); const now = Date.now(); const welcome = s.welcome ||= { joinLastAt: 0, joinRecentMemberIds: [], verifiedLastAt: 0, verifiedMemberIds: [] }; const decision = shouldSendVerifiedWelcome(welcome, member.id, now); welcome.verifiedLastAt = decision.state.verifiedLastAt; welcome.verifiedMemberIds = decision.state.verifiedMemberIds; if (!decision.send) { await store.save(); return false; } const channel = member.guild.channels.cache.find(c => c.name === 'general' && c.isTextBased()); if (!channel) return false; await channel.send(`Welcome to the community, ${member}. Your path into Craftein is open — take your time, meet a few people, and make a place that feels like yours.`); await store.save(); return true; }
 
 client.once('ready', async () => { await register(); console.log(`Craftacus online as ${client.user.tag}`); if (config.guildId) { const guild = await client.guilds.fetch(config.guildId); await setupGuild(guild); } });
