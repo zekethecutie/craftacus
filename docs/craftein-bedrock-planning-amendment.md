@@ -333,3 +333,81 @@ Lives reach zero
 Whether the player can chat, observe active players, travel, access containers, use commands, or participate in lore while spectating requires explicit rules. Spectator mode must not become a way to scout hidden structures, reveal locations, assist combat, or bypass protections unless the owner intentionally permits it.
 
 These rules must be implemented as a controlled server state rather than assuming vanilla spectator behavior alone is sufficient.
+
+The owner has now confirmed the intended restrictions for a player with no lives:
+
+- The player cannot use chat.
+- The player cannot use commands.
+- The player cannot freely travel through the world.
+- The player may return only to their recorded respawn point, within a limited radius, or to a controlled active-player spectate experience.
+- The player must not be able to use the state to scout hidden structures, reveal unexplored terrain, access containers, assist active players, bypass protections, or gather information unavailable to ordinary living players.
+
+The preferred experience is an actual **follow-spectate mode**, similar to spectator systems in multiplayer minigames: the dead player selects an eligible active player and follows that player’s view and movement, including the area they are looking toward. This should be treated as a CRAFTEIN-controlled viewing experience rather than unrestricted vanilla spectator flight.
+
+The future follow-spectate system should validate:
+
+| Rule | Requirement |
+|---|---|
+| Target eligibility | Only active, non-restricted players may be followed. |
+| Movement | The dead player cannot independently fly or teleport. |
+| View | The camera/view follows the selected target or uses a controlled observation position. |
+| Distance | The observer remains within the permitted follow range and dimension. |
+| Interaction | No block breaking, placing, container access, item use, combat, or entity manipulation. |
+| Communication | Chat and command use are disabled while soul-lost. |
+| Privacy | The target should not be exposed to unwanted observation if an opt-out or staff rule is later approved. |
+| Disconnect/restart | The restricted state and selected target recover safely. |
+| Exit | Only a valid altar resurrection, reserved-anchor return, expiry rule, or authorized recovery can end the state. |
+
+The exact camera implementation is Bedrock-version-sensitive. If a true client camera follow is unavailable or unreliable, the fallback should be a controlled teleport/observation system near the target with movement repeatedly corrected by the server. The fallback must not silently grant unrestricted spectator flight.
+
+### 13.6 Altar reservation and post-death resurrection
+
+The Resurrection Altar now has two distinct interaction modes. Both use a menu, but the menu is only a confirmation and selection interface; all state changes are server-authoritative.
+
+#### Mode A: reserve a life before death
+
+A living player may interact with the altar and choose **Reserve One Life**. This creates a persistent reservation or prepared-anchor record for that player. The reserved protection is consumed if the player later reaches zero lives, allowing the player to return through that altar/resurrection path.
+
+The owner has also specified the important alternative: if the player does **not** reserve a life before exhausting their lives, they enter the restricted dead/spectate state and must be resurrected by another player through a difficult ritual. Therefore reservation is a strategic choice, not an automatic safety net.
+
+The reservation design still requires a final decision about what is held or consumed:
+
+- A life is locked in the altar and unavailable for ordinary use.
+- A rare catalyst is consumed to create the reservation.
+- A totem/artifact is deposited and bound to the player.
+- A future death is pre-authorized for one resurrection but still requires an activation ritual.
+
+The reservation must not duplicate if the player clicks the menu repeatedly, changes dimensions, disconnects, or relogs. The altar should display whether a reservation already exists and refuse a second reservation unless an explicit cancellation/refund rule is approved.
+
+#### Mode B: resurrect an already dead player
+
+A living player may interact with the altar and choose **Resurrect Dead Player**. The menu should identify eligible dead players by safe display name and stable server record, then show the required exchange before confirmation.
+
+This mode is intentionally hard and challenging. It may require a rare altar catalyst, a discovered artifact, a dangerous ritual location, a timed sequence, a boss or trial, and/or the donor’s sacrifice of one life. The exact combination is provisional, but the result should be a controlled transaction:
+
+```text
+Living player opens altar
+  -> chooses Resurrect Dead Player
+  -> selects eligible target
+  -> server displays cost and consequences
+  -> donor confirms
+  -> ritual begins and locks the transaction
+  -> offerings or donor life are committed exactly once
+  -> target is restored with the approved return state
+  -> target exits restricted spectate mode
+  -> target is returned to the altar/respawn location
+  -> all HUDs, records, messages, and audit logs update
+```
+
+The target may be offline. In that case, the completed transaction is stored by UUID and applied safely at the target’s next valid join. The ritual must not require a dead player to chat, use a command, or interact with the altar.
+
+The altar menu should clearly distinguish these actions:
+
+```text
+RESURRECTION ALTAR
+├── Reserve One Life
+├── Resurrect Dead Player
+└── View Reservation / Ritual Status
+```
+
+The menu must not expose private data, allow arbitrary target UUID input, or allow a player to submit a resurrection without a final confirmation. All offerings, life transfers, target state changes, and completion records must use an idempotent transaction ID.
