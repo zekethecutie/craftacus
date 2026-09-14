@@ -2,32 +2,36 @@
   "format_version": 2,
   "header": {
     "name": "CRAFTEIN Core Behavior",
-    "description": "Server-authoritative CRAFTEIN life, ritual, and combo prototype.",
+    "description": "Server-authoritative CRAFTEIN life, ritual, combo, and operator settings systems.",
     "uuid": "6d1a9a40-7cc5-4a66-a3ae-7a0e2b6d03e1",
-    "version": [0, 2, 0],
-    "min_engine_version": [1, 21, 80]
+    "version": [0, 3, 0],
+    "min_engine_version": [1, 21, 90]
   },
   "modules": [
     {
       "type": "data",
       "uuid": "c2ab9c41-ef98-4e8a-a31d-0dbb31be7a2b",
-      "version": [0, 2, 0]
+      "version": [0, 3, 0]
     },
     {
       "type": "script",
       "language": "javascript",
       "entry": "scripts/main.js",
       "uuid": "e3f36e02-4dc3-4f36-9a79-0809ad0afab8",
-      "version": [0, 2, 0]
+      "version": [0, 3, 0]
     }
   ],
   "dependencies": [
     {
       "uuid": "db3f2b5d-e5f8-4cf0-a9f8-3d4d9b4d12c8",
-      "version": [0, 2, 0]
+      "version": [0, 3, 0]
     },
     {
       "module_name": "@minecraft/server",
+      "version": "2.0.0"
+    },
+    {
+      "module_name": "@minecraft/server-ui",
       "version": "2.0.0"
     }
   ]

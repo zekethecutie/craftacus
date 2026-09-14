@@ -1,7 +1,8 @@
-import { DynamicPropertiesDefinition, EntityTypes, system, world } from "@minecraft/server";
+import { DynamicPropertiesDefinition, EntityTypes, PlayerPermissionLevel, system, world } from "@minecraft/server";
 import { CONFIG, PROPERTY_DEFINITIONS, STATES, WORLD_PROPERTY_DEFINITIONS } from "./config.js";
 import { registerCombatEvents } from "./combat.js";
 import { beginReservation, commitReservation, restorePlayerFromTransaction } from "./ritual.js";
+import { getSettings, showSettingsMenu } from "./settings.js";
 
 const props = CONFIG.properties;
 
@@ -100,7 +101,7 @@ function processDeath(player) {
 
 function isOperator(player) {
   try {
-    return player.hasTag("craftein:operator") || player.hasTag("craftein:admin");
+    return player.commandPermissionLevel === PlayerPermissionLevel.Operator;
   } catch {
     return false;
   }
@@ -111,16 +112,24 @@ function handleTestCommand(player, message) {
   const parts = message.trim().split(/\s+/);
   const command = parts[1] ?? "";
 
+  if (!isOperator(player)) {
+    player.sendMessage("§cThis test command is restricted.");
+    return;
+  }
+
+  if (command === "settings" || command === "menu") {
+    system.run(() => showSettingsMenu(player, world, isOperator));
+    return;
+  }
+
+  const settings = getSettings(world);
+  if (!settings.testCommandsEnabled) return;
+
   if (command === "lives" || command === "blessing") {
     initializePlayer(player);
     const state = readString(player, props.state, STATES.ALIVE);
     player.sendMessage(`§dCRAFTEIN §fLives: ${lives(player)}/${readInt(player, props.maxLives, CONFIG.maximumLives)} §7State: ${state}`);
     showStatus(player);
-    return;
-  }
-
-  if (!isOperator(player)) {
-    player.sendMessage("§cThis test command is restricted.");
     return;
   }
 
@@ -189,6 +198,9 @@ world.afterEvents.worldInitialize.subscribe((event) => {
     if (type === "string") worldDefinitions.defineString(id, maxLength);
   }
   event.propertyRegistry.registerWorldDynamicProperties(worldDefinitions);
+  if (typeof world.getDynamicProperty(CONFIG.worldProperties.settings) !== "string") {
+    world.setDynamicProperty(CONFIG.worldProperties.settings, JSON.stringify({ schema: 1, effectsQuality: "high", comboWindowTicks: 18, testCommandsEnabled: true, debugMessages: false }));
+  }
 });
 
 world.afterEvents.playerSpawn.subscribe(({ player, initialSpawn }) => {
@@ -204,6 +216,10 @@ world.afterEvents.entityDie.subscribe(({ deadEntity }) => {
 });
 
 world.beforeEvents.chatSend.subscribe((event) => {
+  if (readString(event.sender, props.state, STATES.ALIVE) === STATES.SOUL_LOST) {
+    event.cancel = true;
+    return;
+  }
   if (!event.message.startsWith("!craftein")) return;
   event.cancel = true;
   handleTestCommand(event.sender, event.message);

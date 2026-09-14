@@ -8,6 +8,8 @@ The prototype weapon is `craftein:astral_blade`. Its sequence requires connected
 
 The prototype also includes a test-only altar transaction path. `!craftein reserve` creates and commits a reservation transaction. `!craftein resurrect <player>` performs an online-player prototype resurrection using donor-life protection rules and the generated resurrection ring effect. These commands are temporary engineering hooks, not the final altar GUI or production permissions.
 
+The resource pack now uses the supplied CRAFTEIN logo as the pack icon and the title/loading image override at `textures/gui/title/minecraft.png`. It also provides the CRAFTEIN hardcore-style life-heart textures under `textures/ui/heart.png`, `heart_half.png`, and `heart_hardcore.png`. The three-life action-bar indicator remains separate from normal health so life count and health cannot be confused.
+
 ## Test commands
 
 The currently enabled operator test commands are:
@@ -21,6 +23,10 @@ The currently enabled operator test commands are:
 | `!craftein giveblade` | Give the prototype Astral Blade. |
 | `!craftein reserve` | Commit a prototype reservation transaction. |
 | `!craftein resurrect <player>` | Run the prototype donor-life resurrection path. |
+| `!craftein settings` | Open the native Minecraft CRAFTEIN operator settings menu. |
+| `!craftein menu` | Alias for the settings menu. |
+
+Every test command and the native settings menu now require the Bedrock player operator permission. Soul-lost players cannot chat or use these commands. The settings menu persists world-level controls for effect quality, combo timing window, debug messages, and whether test commands are enabled.
 
 ## Assets and conversion
 

@@ -4,14 +4,14 @@
     "name": "CRAFTEIN Core Resources",
     "description": "Visual foundation for CRAFTEIN life, ritual, and combo prototype.",
     "uuid": "db3f2b5d-e5f8-4cf0-a9f8-3d4d9b4d12c8",
-    "version": [0, 2, 0],
+    "version": [0, 3, 0],
     "min_engine_version": [1, 21, 80]
   },
   "modules": [
     {
       "type": "resources",
       "uuid": "07e4f3d8-fd29-4d8a-9cd8-4e7b1d17cf2a",
-      "version": [0, 2, 0]
+      "version": [0, 3, 0]
     }
   ]
 }
