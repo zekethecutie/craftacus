@@ -1,0 +1,23 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "animation.craftein.astral_blade.hold": {
+      "loop": true,
+      "animation_length": 1.6,
+      "bones": {
+        "root": {
+          "rotation": {
+            "0.0": [0, -2, 0],
+            "0.8": [0, 2, 0],
+            "1.6": [0, -2, 0]
+          },
+          "scale": {
+            "0.0": [1, 1, 1],
+            "0.8": [1.015, 1.015, 1.015],
+            "1.6": [1, 1, 1]
+          }
+        }
+      }
+    }
+  }
+}

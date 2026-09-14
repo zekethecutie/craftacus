@@ -1,0 +1,29 @@
+{
+  "format_version": "1.21.80",
+  "minecraft:item": {
+    "description": {
+      "identifier": "craftein:astral_blade",
+      "menu_category": {
+        "category": "equipment"
+      }
+    },
+    "components": {
+      "minecraft:max_stack_size": 1,
+      "minecraft:icon": {
+        "texture": "astral_blade"
+      },
+      "minecraft:display_name": {
+        "value": "item.craftein.astral_blade.name"
+      },
+      "minecraft:hand_equipped": true,
+      "minecraft:use_modifiers": {
+        "movement_modifier": 0.85,
+        "use_duration": 0.35
+      },
+      "minecraft:damage": 6,
+      "minecraft:durability": {
+        "max_durability": 720
+      }
+    }
+  }
+}

@@ -1,5 +1,7 @@
 import { DynamicPropertiesDefinition, EntityTypes, system, world } from "@minecraft/server";
 import { CONFIG, PROPERTY_DEFINITIONS, STATES, WORLD_PROPERTY_DEFINITIONS } from "./config.js";
+import { registerCombatEvents } from "./combat.js";
+import { beginReservation, commitReservation, restorePlayerFromTransaction } from "./ritual.js";
 
 const props = CONFIG.properties;
 
@@ -43,6 +45,9 @@ function initializePlayer(player) {
     player.setDynamicProperty(props.state, STATES.ALIVE);
     player.setDynamicProperty(props.deathToken, "");
     player.setDynamicProperty(props.deaths, 0);
+    player.setDynamicProperty(props.comboStep, 0);
+    player.setDynamicProperty(props.comboLastTick, -9999);
+    player.setDynamicProperty(props.comboLockUntil, 0);
     player.setDynamicProperty(props.schema, CONFIG.schemaVersion);
     player.sendMessage("§dThe Danan blessing recognizes you. §fYou carry three returns.");
     return;
@@ -56,6 +61,9 @@ function initializePlayer(player) {
   if (!readString(player, props.state)) {
     setState(player, STATES.ALIVE);
   }
+  if (typeof player.getDynamicProperty(props.comboStep) !== "number") player.setDynamicProperty(props.comboStep, 0);
+  if (typeof player.getDynamicProperty(props.comboLastTick) !== "number") player.setDynamicProperty(props.comboLastTick, -9999);
+  if (typeof player.getDynamicProperty(props.comboLockUntil) !== "number") player.setDynamicProperty(props.comboLockUntil, 0);
 }
 
 function processDeath(player) {
@@ -135,6 +143,35 @@ function handleTestCommand(player, message) {
     setState(player, value === 0 ? STATES.SOUL_LOST : STATES.ALIVE);
     player.sendMessage(`§eCRAFTEIN test lives set to ${value}.`);
     showStatus(player);
+    return;
+  }
+
+  if (command === "giveblade") {
+    player.runCommand("give @s craftein:astral_blade 1");
+    player.sendMessage("§bThe Astral Blade prototype has been placed in your hand.");
+    return;
+  }
+
+  if (command === "reserve") {
+    const started = beginReservation(player.id, "prototype_altar", "rare_catalyst");
+    if (!started.ok) {
+      player.sendMessage(`§cReservation failed: ${started.reason}`);
+      return;
+    }
+    const committed = commitReservation(started.transaction.transactionId);
+    player.sendMessage(committed.ok ? "§dOne resurrection life is reserved. §7Prototype reservation committed." : "§cReservation could not be committed.");
+    return;
+  }
+
+  if (command === "resurrect") {
+    const targetName = parts[2];
+    const target = world.getPlayers().find((candidate) => candidate.name === targetName);
+    if (!target) {
+      player.sendMessage("§cTarget must be online for the prototype ritual.");
+      return;
+    }
+    const result = restorePlayerFromTransaction(target, player);
+    player.sendMessage(result.ok ? "§aPrototype resurrection completed." : `§cResurrection failed: ${result.reason}`);
   }
 }
 
@@ -171,6 +208,8 @@ world.beforeEvents.chatSend.subscribe((event) => {
   event.cancel = true;
   handleTestCommand(event.sender, event.message);
 });
+
+registerCombatEvents();
 
 system.runInterval(() => {
   for (const player of world.getPlayers()) {
